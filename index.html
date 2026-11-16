@@ -534,10 +534,10 @@ var MON=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'
 var WD=['dom','seg','ter','qua','qui','sex','sáb'];
 var TYPES={aula:'Aula',reuniao:'Reunião de setor',outro:'Outra atividade'};
 var ROLES={ligante:'Ligante',coordenador:'Coordenador(a)',diretoria:'Diretoria'};
-var TABS=['inicio','ranking','cobranca','metas','calendario','reunioes','tarefas','equipe','unipex','regras','diretoria','mais'];
-/* Abas agrupadas: Metas junta metas e tarefas dos coordenadores; Agenda junta aulas e reuniões; Liga junta equipe, UNIPEX e regras. */
-var GROUP={metas:'metas',tarefas:'metas',calendario:'calendario',reunioes:'calendario',equipe:'equipe',unipex:'equipe',regras:'equipe'};
-var SUBNAV={metas:[['metas','Metas'],['tarefas','Tarefas dos coordenadores']],calendario:[['calendario','Aulas e eventos'],['reunioes','Reuniões de setor']],equipe:[['equipe','Equipe'],['unipex','UNIPEX'],['regras','Regras']]};
+var TABS=['inicio','ranking','cobranca','metas','calendario','reunioes','equipe','unipex','regras','diretoria','mais'];
+/* Abas agrupadas: Agenda junta aulas e reuniões; Liga junta equipe, UNIPEX e regras. */
+var GROUP={calendario:'calendario',reunioes:'calendario',equipe:'equipe',unipex:'equipe',regras:'equipe'};
+var SUBNAV={calendario:[['calendario','Aulas e eventos'],['reunioes','Reuniões de setor']],equipe:[['equipe','Equipe'],['unipex','UNIPEX'],['regras','Regras']]};
 var MORE=['mais','calendario','reunioes','equipe','unipex','regras','diretoria'];
 
 function $(s,r){return (r||document).querySelector(s);}
@@ -915,7 +915,6 @@ function configDlg(){
   formDlg({title:'Regras e dados da liga',fields:[
     {name:'leagueName',label:'Nome da liga',required:true,half:true,value:c.leagueName},
     {name:'whatsapp',label:'WhatsApp da diretoria',half:true,value:c.whatsapp,placeholder:'85999990000',hint:'Opcional, com DDD.'},
-    {name:'tarefasUrl',label:'Link do formulário dos coordenadores (Google Forms)',value:c.tarefasUrl||'',placeholder:'https://forms.gle/...',hint:'É o link que o coordenador abre para pedir ou confirmar tarefas.'},
     {name:'presenceAula',label:'Presença em aula',type:'number',step:'1',half:true,value:c.presenceAula},
     {name:'presenceReuniao',label:'Presença em reunião',type:'number',step:'1',half:true,value:c.presenceReuniao},
     {name:'absencePenalty',label:'Desconto por falta',type:'number',step:'1',half:true,value:c.absencePenalty},
@@ -924,7 +923,7 @@ function configDlg(){
     {name:'usage',label:'Para que serve o ranking',type:'textarea',value:c.usage}
   ],onSubmit:function(v){
     var acts=v.activities.split(/\n+/).map(function(l){var p=l.split(';');var pts=Number((p.pop()||'').trim());return {label:p.join(';').trim(),points:pts};}).filter(function(a){return a.label&&isFinite(a.points);});
-    return db?db.doc('config/main').set({leagueName:v.leagueName,subtitle:c.subtitle,whatsapp:v.whatsapp.replace(/\D/g,''),waSectors:c.waSectors||{},formUrl:c.formUrl||'',tarefasUrl:/^https:\/\//.test(v.tarefasUrl)?v.tarefasUrl:'',emailOn:!!c.emailOn,monthPrize:c.monthPrize||'',presenceAula:Math.abs(num(v.presenceAula,1)),presenceReuniao:Math.abs(num(v.presenceReuniao,1)),absencePenalty:Math.abs(num(v.absencePenalty,1)),latePenalty:Math.abs(num(v.latePenalty,1)),activities:acts,usage:v.usage}):Promise.reject({code:'unavailable'});
+    return db?db.doc('config/main').set({leagueName:v.leagueName,subtitle:c.subtitle,whatsapp:v.whatsapp.replace(/\D/g,''),waSectors:c.waSectors||{},formUrl:c.formUrl||'',tarefasUrl:c.tarefasUrl||'',emailOn:!!c.emailOn,monthPrize:c.monthPrize||'',presenceAula:Math.abs(num(v.presenceAula,1)),presenceReuniao:Math.abs(num(v.presenceReuniao,1)),absencePenalty:Math.abs(num(v.absencePenalty,1)),latePenalty:Math.abs(num(v.latePenalty,1)),activities:acts,usage:v.usage}):Promise.reject({code:'unavailable'});
   },done:'Dados atualizados.'});
 }
 
@@ -979,7 +978,7 @@ function gcal(e){
   return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(e.title)+'&dates='+dates+'&ctz=America/Fortaleza'+(e.place?'&location='+encodeURIComponent(e.place):'');
 }
 
-var NOTICE='Terminou uma meta? Avise na hora o coordenador do seu setor. Ele registra a entrega e a presidência confirma.';
+var NOTICE='Terminou uma meta? Avise na hora o coordenador do seu setor ou a presidência para ela ser marcada como entregue.';
 function draft(){if(!S.draft)S.draft={who:meMember()?S.me:'',txt:'',date:todayStr(),link:''};return S.draft;}
 function feitoSend(){
   var d=draft(),m=member(d.who);
@@ -1238,7 +1237,6 @@ function viewRegras(){
 /* O que depende da presidência: tudo num lugar só. cfg:true marca o que é configuração para colocar o painel no ar. */
 function adminTodos(){
   var t=todayStr(),now=nowStr(),tm=t.slice(0,7),sem=semesterOf(t),L=[],c=cfg();
-  var np=pending().length;if(np)L.push({n:np,txt:plural(np,'pedido de coordenador aguardando','pedidos de coordenador aguardando'),sub:'Tarefas novas para virar meta ou entregas para confirmar.',href:'#tarefas',btn:'Conferir'});
   var na=S.events.filter(function(e){return e.date&&e.date<t&&semesterOf(e.date)===sem&&!Object.keys(e.attendance||{}).length;}).sort(function(a,b){return a.date<b.date?1:-1;});
   if(na.length)L.push({n:na.length,txt:plural(na.length,'evento passado sem presença lançada','eventos passados sem presença lançada'),sub:na.slice(0,3).map(function(e){return fmtD(e.date)+' '+e.title;}).join(' · '),href:'#calendario',btn:'Lançar'});
   var late=S.goals.filter(function(g){return g.status==='pendente'&&g.due&&now>deadlineOf(g)&&member(g.memberId);}).length;
@@ -1272,7 +1270,7 @@ function viewDiretoria(){
     (ms.length?'<div class="tablewrap"><table class="wide"><thead><tr><th>Nome</th><th>Setor</th><th>Função</th><th>E-mail</th><th>Situação</th><th></th></tr></thead><tbody>'+ms.map(function(m){
       return '<tr><td><span class="who">'+dot(m,'sm')+'<span>'+esc(m.name)+'</span></span></td><td><span class="tags">'+sectorTags(m)+'</span></td><td>'+esc(roleLabel(m))+'</td><td>'+(ct[m.id]?'<span class="small">'+esc(ct[m.id])+'</span>':'<span class="pill warn">Falta</span>')+'</td><td>'+(m.active===false?'<span class="pill">Inativo</span>':'<span class="pill good">Ativo</span>')+(m.ranked===false?' <span class="pill">Fora do ranking</span>':'')+'</td><td class="r"><button class="btn sm" data-act="member-edit" data-id="'+esc(m.id)+'">Editar</button></td></tr>';}).join('')+'</tbody></table></div>'
       :'<p class="empty"><b>Nenhum ligante cadastrado</b>Cole a lista com nome e setor em Importar lista.</p>')+'</section>'+
-    '<section class="card"><div class="cardhead"><h3 class="sec">Rotina sugerida</h3></div><ol class="steps"><li>Depois de cada aula ou reunião, abra o evento na Agenda e lance a presença.</li><li>Depois da reunião mensal de cada setor, registre os encaminhamentos e crie as metas com prazo.</li><li>Quando alguém entregar, marque a meta como entregue.</li><li>Quando chegar um pedido de coordenador, confira em Metas, na aba Tarefas dos coordenadores: tarefa nova vira meta, entrega confirmada marca a meta como entregue.</li><li>Toda semana, copie o resumo e a lista de cobrança e mande no grupo.</li></ol></section>';
+    '<section class="card"><div class="cardhead"><h3 class="sec">Rotina sugerida</h3></div><ol class="steps"><li>Depois de cada aula ou reunião, abra o evento na Agenda e lance a presença.</li><li>Depois da reunião mensal de cada setor, registre os encaminhamentos e crie as metas com prazo.</li><li>Quando alguém entregar, marque a meta como entregue.</li><li>Quando um coordenador avisar que alguém entregou, marque a meta como entregue em Metas.</li><li>Toda semana, copie o resumo e a lista de cobrança e mande no grupo.</li></ol></section>';
 }
 function person(m,lead){return '<li class="'+(lead?'lead':'')+'"><button data-act="extrato" data-id="'+esc(m.id)+'"><span class="mini" aria-hidden="true">'+(photo(m.id)?'<img src="'+photo(m.id)+'" alt="">':esc(initials(m.name)))+'</span><span><b>'+esc(m.name)+'</b><small>'+esc(lead?roleLabel(m):'Ligante')+'</small></span></button></li>';}
 /* E-mails para grupos: a página só agenda (coleção envios); quem envia é a tarefa diária, pela conta da liga. */
@@ -1357,7 +1355,7 @@ function viewMais(){
     (S.canEdit?'<a href="#diretoria"><b>Diretoria</b><span>'+(function(){var k=adminTodos().filter(function(x){return !x.cfg;}).length;return k?plural(k,'pendência sua','pendências suas'):'Pendências, ligantes e configurações';})()+'</span></a>':'')+'</div>';
 }
 
-var VIEWS={inicio:viewInicio,ranking:viewRanking,cobranca:viewCobranca,metas:viewMetas,calendario:viewCalendario,reunioes:viewReunioes,tarefas:viewTarefas,equipe:viewEquipe,unipex:viewUnipex,regras:viewRegras,diretoria:viewDiretoria,mais:viewMais};
+var VIEWS={inicio:viewInicio,ranking:viewRanking,cobranca:viewCobranca,metas:viewMetas,calendario:viewCalendario,reunioes:viewReunioes,equipe:viewEquipe,unipex:viewUnipex,regras:viewRegras,diretoria:viewDiretoria,mais:viewMais};
 function render(){
   var c=cfg();
   $('#leagueName').textContent=c.leagueName;$('#leagueSub').textContent=c.subtitle;
@@ -1378,7 +1376,7 @@ function render(){
   var nt=S.canEdit?adminTodos().filter(function(x){return !x.cfg;}).length:0;document.querySelectorAll('[data-todo]').forEach(function(b){b.hidden=!nt;b.textContent=nt;});
 }
 function schedule(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;render();});}
-function route(){var h=(location.hash||'').replace('#','');if(h==='feitos')h='tarefas';S.tab=TABS.indexOf(h)>=0?h:'inicio';if(MIRROR&&S.tab==='diretoria')S.tab='inicio';if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();render();window.scrollTo(0,0);}
+function route(){var h=(location.hash||'').replace('#','');if(h==='feitos'||h==='tarefas')h='metas';S.tab=TABS.indexOf(h)>=0?h:'inicio';if(MIRROR&&S.tab==='diretoria')S.tab='inicio';if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();render();window.scrollTo(0,0);}
 
 document.addEventListener('click',function(ev){
   var b=ev.target.closest('[data-act]');if(!b||dlg.contains(b))return;var id=b.dataset.id,a=b.dataset.act;
@@ -1428,7 +1426,7 @@ async function init(){
   var r=await Promise.all([use('db'),use('user')]);db=r[0];user=r[1];
   if(user){try{S.canEdit=!!(await user.canEdit());S.uid=await user.id();}catch(e){}}
   if(!db){clearTimeout(timer);S.status='nodb';render();return;}
-  var got={},map={members:'members',events:'events',goals:'goals',entries:'entries',cobrancas:'charges',pedidos:'requests',tarefas:'tasks',unipex:'notes'},need=Object.keys(map).concat(['config']);
+  var got={},map={members:'members',events:'events',goals:'goals',entries:'entries',cobrancas:'charges',pedidos:'requests',unipex:'notes'},need=Object.keys(map).concat(['config']);
   var touchT=null;
   function touch(){clearTimeout(touchT);touchT=setTimeout(function(){try{db.doc('status/alterado').set({at:nowStr()}).catch(function(){});}catch(e){}},2500);}
   function mark(k){var was=S.ready;got[k]=1;if(!S.ready&&need.every(function(x){return got[x];})){S.ready=true;S.status='ok';clearTimeout(timer);}if(was&&S.canEdit&&!MIRROR)touch();schedule();}
