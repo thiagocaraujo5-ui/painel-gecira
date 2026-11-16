@@ -1,6 +1,22 @@
 {
  "collections": {
   "cobrancas": {
+   "4u72lrv8y52vrgkb5htp": {
+    "date": "2026-11-16",
+    "email": true,
+    "memberId": "getulio-filho",
+    "resolved": true,
+    "resolvedAt": "2026-11-16",
+    "text": "VOCE NAO ESTA TRABALHANDO DIABETICO BAITOLA"
+   },
+   "m9hs1wcc5o9re3jiba55": {
+    "date": "2026-11-16",
+    "email": true,
+    "memberId": "marina-holanda",
+    "resolved": true,
+    "resolvedAt": "2026-11-16",
+    "text": "KD A PORRA DO POJETO DE PESQSUISA?"
+   },
    "o3iv90kz2rucjt9q2f33": {
     "date": "2026-11-15",
     "email": true,
@@ -157,13 +173,13 @@
    "joao-moraes": {
     "active": true,
     "cargo": "Presidente",
-    "coord": true,
+    "coord": false,
     "name": "João Moraes",
     "photoFile": "fotos/joao-moraes.jpg",
     "ranked": false,
     "role": "diretoria",
     "sector": "presidencia",
-    "sector2": "ensino"
+    "sector2": ""
    },
    "jose-hermano": {
     "active": true,
@@ -331,7 +347,18 @@
     "sector2": ""
    }
   },
-  "pedidos": {},
+  "pedidos": {
+   "f-20261116185106-antonio-augusto": {
+    "date": "2026-11-12",
+    "link": "",
+    "memberId": "antonio-augusto",
+    "name": "Antônio Augusto",
+    "sentAt": "2026-11-16T18:51:06",
+    "status": "pendente",
+    "text": "Fui para capacitsco "
+   }
+  },
+  "tarefas": {},
   "unipex": {}
  },
  "docs": {
@@ -357,14 +384,14 @@
    "usage": "Sem pontos, sem prioridade. A ordem do ranking do semestre é a ordem de escolha."
   },
   "status/importador": {
-   "imported": 0,
-   "lastRun": "2026-11-16T12:20",
-   "rows": 1
+   "imported": 1,
+   "lastRun": "2026-11-16T20:17",
+   "rows": 2
   }
  },
- "exportedAt": "2026-11-16T17:47",
+ "exportedAt": "2026-11-16T20:48",
  "source": {
-  "alteradoAt": "",
-  "importadorRows": 1
+  "alteradoAt": "2026-11-16T20:17",
+  "importadorRows": 2
  }
 }
