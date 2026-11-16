@@ -4,7 +4,7 @@ Uso: python3 -I tools/montar.py <pasta-de-entrada> <arquivo-de-saida> <AAAA-MM-D
 
 A pasta de entrada tem um arquivo por coleção, com as linhas que db_list devolve
 (um objeto JSON por linha, com "id" e "data"): members.jsonl, events.jsonl,
-goals.jsonl, entries.jsonl, unipex.jsonl, pedidos.jsonl, cobrancas.jsonl. E também config.json,
+goals.jsonl, entries.jsonl, unipex.jsonl, pedidos.jsonl, cobrancas.jsonl, tarefas.jsonl. E também config.json,
 importador.json e alterado.json, cada um com o objeto "data" do documento
 (ou {} se o documento não existir).
 
@@ -14,7 +14,7 @@ WhatsApp e e-mail da configuração.
 """
 import json, os, sys
 
-PUBLIC = ['members', 'events', 'goals', 'entries', 'unipex', 'pedidos', 'cobrancas']
+PUBLIC = ['members', 'events', 'goals', 'entries', 'unipex', 'pedidos', 'cobrancas', 'tarefas']
 CONFIG_DROP = {'whatsapp', 'waSectors', 'emailOn'}
 
 
