@@ -1,0 +1,326 @@
+{
+ "exportedAt": "2026-11-16T17:41",
+ "collections": {
+  "members": {
+   "ana-luiza": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Ana Luiza",
+    "photoFile": "fotos/ana-luiza.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "extensao",
+    "sector2": ""
+   },
+   "ana-vitoria": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Ana Vitória",
+    "photoFile": "fotos/ana-vitoria.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "extensao",
+    "sector2": ""
+   },
+   "anisia-maria": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Anísia Maria",
+    "photoFile": "fotos/anisia-maria.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "pesquisa",
+    "sector2": ""
+   },
+   "antonio-augusto": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Antônio Augusto",
+    "photoFile": "fotos/antonio-augusto.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "ensino",
+    "sector2": ""
+   },
+   "davi-bastos": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Davi Bastos",
+    "photoFile": "fotos/davi-bastos.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "extensao",
+    "sector2": ""
+   },
+   "fernanda-nepomuceno": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Fernanda Nepomuceno",
+    "photoFile": "fotos/fernanda-nepomuceno.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "marketing",
+    "sector2": ""
+   },
+   "getulio-filho": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Getúlio Filho",
+    "photoFile": "fotos/getulio-filho.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "extensao",
+    "sector2": ""
+   },
+   "giovanna-egypto": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Giovanna Egypto",
+    "photoFile": "fotos/giovanna-egypto.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "ensino",
+    "sector2": "pesquisa"
+   },
+   "isaquiel-justa": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Isaquiel Justa",
+    "photoFile": "fotos/isaquiel-justa.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "pesquisa",
+    "sector2": ""
+   },
+   "joao-moraes": {
+    "active": true,
+    "cargo": "Presidente",
+    "coord": true,
+    "name": "João Moraes",
+    "photoFile": "fotos/joao-moraes.jpg",
+    "ranked": false,
+    "role": "diretoria",
+    "sector": "presidencia",
+    "sector2": "ensino"
+   },
+   "jose-hermano": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "José Hermano",
+    "photoFile": "fotos/jose-hermano.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "ensino",
+    "sector2": ""
+   },
+   "maria-clara-borges": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Maria Clara Borges",
+    "photoFile": "fotos/maria-clara-borges.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "ensino",
+    "sector2": ""
+   },
+   "marina-holanda": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Marina Holanda",
+    "photoFile": "fotos/marina-holanda.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "pesquisa",
+    "sector2": ""
+   },
+   "melanie-loll": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Melanie Loll",
+    "photoFile": "fotos/melanie-loll.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "marketing",
+    "sector2": ""
+   },
+   "natalia-queiros": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Natália Queirós",
+    "photoFile": "fotos/natalia-queiros.jpg",
+    "ranked": true,
+    "role": "coordenador",
+    "sector": "marketing",
+    "sector2": ""
+   },
+   "nertan-ribeiro": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Nertan Ribeiro",
+    "photoFile": "fotos/nertan-ribeiro.jpg",
+    "ranked": true,
+    "role": "coordenador",
+    "sector": "extensao",
+    "sector2": ""
+   },
+   "pedro-dantas": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Pedro Dantas",
+    "photoFile": "fotos/pedro-dantas.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "pesquisa",
+    "sector2": ""
+   },
+   "pedro-frota": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Pedro Frota",
+    "photoFile": "fotos/pedro-frota.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "marketing",
+    "sector2": ""
+   },
+   "sara-diogenes": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Sara Diógenes",
+    "photoFile": "fotos/sara-diogenes.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "extensao",
+    "sector2": ""
+   },
+   "sophia-arrais": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Sophia Arrais",
+    "photoFile": "fotos/sophia-arrais.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "marketing",
+    "sector2": ""
+   },
+   "sophia-souza": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Sophia Souza",
+    "photoFile": "fotos/sophia-souza.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "marketing",
+    "sector2": ""
+   },
+   "thiago-caccia": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Thiago Caccia",
+    "photoFile": "fotos/thiago-caccia.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "extensao",
+    "sector2": ""
+   },
+   "thiago-cavalcante": {
+    "active": true,
+    "cargo": "Vice-presidente",
+    "coord": false,
+    "name": "Thiago Cavalcante",
+    "photoFile": "fotos/thiago-cavalcante.jpg",
+    "ranked": false,
+    "role": "diretoria",
+    "sector": "presidencia",
+    "sector2": ""
+   },
+   "victor-leitao": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Victor Leitão",
+    "photoFile": "fotos/victor-leitao.jpg",
+    "ranked": true,
+    "role": "ligante",
+    "sector": "ensino",
+    "sector2": ""
+   },
+   "vivian-rocha": {
+    "active": true,
+    "cargo": "",
+    "coord": false,
+    "name": "Vivian Rocha",
+    "photoFile": "fotos/vivian-rocha.jpg",
+    "ranked": true,
+    "role": "coordenador",
+    "sector": "pesquisa",
+    "sector2": ""
+   }
+  },
+  "events": {},
+  "entries": {},
+  "unipex": {},
+  "pedidos": {},
+  "goals": {
+   "teste-aviso-email": {
+    "doneAt": "2026-11-16",
+    "due": "2026-11-30",
+    "dueTime": "",
+    "late": false,
+    "memberId": "thiago-cavalcante",
+    "points": 1,
+    "status": "concluida",
+    "title": "Teste do aviso automático (pode ignorar)"
+   }
+  }
+ },
+ "docs": {
+  "config/main": {
+   "absencePenalty": 1,
+   "activities": [
+    {
+     "label": "Organizar evento da liga",
+     "points": 4
+    },
+    {
+     "label": "Trabalho apresentado em congresso",
+     "points": 4
+    }
+   ],
+   "formUrl": "https://forms.gle/cuJYc1JJemjbeXts5",
+   "latePenalty": 1,
+   "leagueName": "GECIRA",
+   "monthPrize": "Isenção da cota mensal",
+   "presenceAula": 1,
+   "presenceReuniao": 1,
+   "subtitle": "Grupo de Extensão em Cirurgia e Anatomia",
+   "usage": "Sem pontos, sem prioridade. A ordem do ranking do semestre é a ordem de escolha."
+  },
+  "status/importador": {
+   "imported": 0,
+   "lastRun": "2026-11-16T12:20",
+   "rows": 1
+  }
+ }
+}
