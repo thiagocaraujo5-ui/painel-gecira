@@ -1,6 +1,19 @@
 {
- "exportedAt": "2026-11-16T17:41",
  "collections": {
+  "entries": {},
+  "events": {},
+  "goals": {
+   "teste-aviso-email": {
+    "doneAt": "2026-11-16",
+    "due": "2026-11-30",
+    "dueTime": "",
+    "late": false,
+    "memberId": "thiago-cavalcante",
+    "points": 1,
+    "status": "concluida",
+    "title": "Teste do aviso automático (pode ignorar)"
+   }
+  },
   "members": {
    "ana-luiza": {
     "active": true,
@@ -278,22 +291,8 @@
     "sector2": ""
    }
   },
-  "events": {},
-  "entries": {},
-  "unipex": {},
   "pedidos": {},
-  "goals": {
-   "teste-aviso-email": {
-    "doneAt": "2026-11-16",
-    "due": "2026-11-30",
-    "dueTime": "",
-    "late": false,
-    "memberId": "thiago-cavalcante",
-    "points": 1,
-    "status": "concluida",
-    "title": "Teste do aviso automático (pode ignorar)"
-   }
-  }
+  "unipex": {}
  },
  "docs": {
   "config/main": {
@@ -322,5 +321,10 @@
    "lastRun": "2026-11-16T12:20",
    "rows": 1
   }
+ },
+ "exportedAt": "2026-11-16T17:42",
+ "source": {
+  "alteradoAt": "",
+  "importadorRows": 1
  }
 }
