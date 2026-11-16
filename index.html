@@ -825,7 +825,6 @@ function configDlg(){
     {name:'leagueName',label:'Nome da liga',required:true,half:true,value:c.leagueName},
     {name:'whatsapp',label:'WhatsApp da diretoria',half:true,value:c.whatsapp,placeholder:'85999990000',hint:'Opcional, com DDD. Só é usado se o formulário de feitos estiver sem link.'},
     {name:'formUrl',label:'Link do formulário de feitos (Google Forms)',value:c.formUrl,placeholder:'https://forms.gle/...',hint:'É o link que o ligante abre para enviar um feito.'},
-    {name:'monthPrize',label:'Prêmio do Ligante do mês',required:true,value:c.monthPrize},
     {name:'presenceAula',label:'Presença em aula',type:'number',step:'1',half:true,value:c.presenceAula},
     {name:'presenceReuniao',label:'Presença em reunião',type:'number',step:'1',half:true,value:c.presenceReuniao},
     {name:'absencePenalty',label:'Desconto por falta',type:'number',step:'1',half:true,value:c.absencePenalty},
@@ -834,7 +833,7 @@ function configDlg(){
     {name:'usage',label:'Para que serve o ranking',type:'textarea',value:c.usage}
   ],onSubmit:function(v){
     var acts=v.activities.split(/\n+/).map(function(l){var p=l.split(';');var pts=Number((p.pop()||'').trim());return {label:p.join(';').trim(),points:pts};}).filter(function(a){return a.label&&isFinite(a.points);});
-    return db?db.doc('config/main').set({leagueName:v.leagueName,subtitle:c.subtitle,whatsapp:v.whatsapp.replace(/\D/g,''),waSectors:c.waSectors||{},formUrl:/^https:\/\//.test(v.formUrl)?v.formUrl:'',emailOn:!!c.emailOn,monthPrize:v.monthPrize,presenceAula:Math.abs(num(v.presenceAula,1)),presenceReuniao:Math.abs(num(v.presenceReuniao,1)),absencePenalty:Math.abs(num(v.absencePenalty,1)),latePenalty:Math.abs(num(v.latePenalty,1)),activities:acts,usage:v.usage}):Promise.reject({code:'unavailable'});
+    return db?db.doc('config/main').set({leagueName:v.leagueName,subtitle:c.subtitle,whatsapp:v.whatsapp.replace(/\D/g,''),waSectors:c.waSectors||{},formUrl:/^https:\/\//.test(v.formUrl)?v.formUrl:'',emailOn:!!c.emailOn,monthPrize:c.monthPrize||'',presenceAula:Math.abs(num(v.presenceAula,1)),presenceReuniao:Math.abs(num(v.presenceReuniao,1)),absencePenalty:Math.abs(num(v.absencePenalty,1)),latePenalty:Math.abs(num(v.latePenalty,1)),activities:acts,usage:v.usage}):Promise.reject({code:'unavailable'});
   },done:'Dados atualizados.'});
 }
 
@@ -874,8 +873,8 @@ function resumoText(){
   var rk=rankMembers(S.members,computeScores(data(),semesterOf(t),t),'').slice(0,5);
   if(rk.length){L.push('','🏆 *Ranking '+semesterOf(t)+'*');rk.forEach(function(r){L.push(r.pos+'. '+r.m.name+': '+r.s.points+' pts');});}
   var cur=t.slice(0,7),wp=winnersOf(prevYm(cur)),wc=winnersOf(cur);
-  if(wp.length)L.push('','⭐ *Ligante do mês de '+monthName(prevYm(cur))+'*: '+winNames(wp)+' ('+wp[0].s.points+' pts). '+c.monthPrize+'.');
-  if(wc.length)L.push((wp.length?'':'\n')+'Disputa de '+monthName(cur)+': '+winNames(wc)+' lidera com '+wc[0].s.points+' pts.');
+  if(false&&wp.length)L.push('','⭐ *Ligante do mês de '+monthName(prevYm(cur))+'*: '+winNames(wp)+' ('+wp[0].s.points+' pts). '+c.monthPrize+'.');
+  if(false&&wc.length)L.push((wp.length?'':'\n')+'Disputa de '+monthName(cur)+': '+winNames(wc)+' lidera com '+wc[0].s.points+' pts.');
   var ch=charges();
   if(ch.length){L.push('','🚨 *Precisa ser cobrado ('+ch.length+')*');ch.forEach(function(x){L.push('• *'+x.m.name+'* ('+sectorLabel(x.m.sector)+')');x.items.forEach(function(it){L.push('   – '+it.text);});});L.push('Só sai da lista quem resolve.');}
   else L.push('','✅ Ninguém na lista de cobrança.');
@@ -987,7 +986,7 @@ function viewInicio(){
     (ch.length?'<ul class="owelist">'+ch.slice(0,5).map(function(c){return '<li><span class="bar"></span><span class="who">'+dot(c.m)+'<span><b>'+esc(c.m.name)+'</b><small>'+esc(c.items[0].text)+'</small></span></span><span class="pill crit num">'+plural(c.items.length,'pendência','pendências')+'</span></li>';}).join('')+'</ul>'
       :'<p class="allgood">Ninguém devendo. É assim que tem que ser.</p>')+'</section>';
   var td=S.canEdit?adminTodos().filter(function(x){return !x.cfg;}):[];
-  h+=monthCard()+(td.length?'<a class="notice box" href="#diretoria" style="display:block;text-decoration:none"><b>'+plural(td.length,'pendência da presidência','pendências da presidência')+':</b> '+esc(td.slice(0,3).map(function(x){return x.txt;}).join('; '))+(td.length>3?'…':'')+'. Toque para resolver.</a>':'')+'<div class="two">'+best+owe+'</div>';
+  h+=(td.length?'<a class="notice box" href="#diretoria" style="display:block;text-decoration:none"><b>'+plural(td.length,'pendência da presidência','pendências da presidência')+':</b> '+esc(td.slice(0,3).map(function(x){return x.txt;}).join('; '))+(td.length>3?'…':'')+'. Toque para resolver.</a>':'')+'<div class="two">'+best+owe+'</div>';
   if(!me){
     h+='<section class="me"><div class="who"><b>Escolha seu nome para ver suas metas e sua posição</b></div>'+meSelect()+'</section>';
   }else{
@@ -1025,11 +1024,11 @@ function viewRanking(){
   charges().forEach(function(c){chMap[c.m.id]=c.items.length;});
   rk.forEach(function(r){if(r.s.points>max)max=r.s.points;});
   var chips='<div class="chips" role="group" aria-label="Filtrar por setor">'+[{id:'',label:'Geral'}].concat(SECTORS).map(function(s){return '<button class="chipbtn" data-act="rank-sector" data-id="'+s.id+'" aria-pressed="'+(S.rankSector===s.id)+'">'+(s.id?'<i class="dot '+s.id+'"></i>':'')+esc(s.label)+'</button>';}).join('')+'</div>';
-  return '<div class="head"><div><h2>'+(S.rankPeriod?'Ranking de '+monthName(S.rankPeriod):'Ranking '+esc(S.cycle))+'</h2><p>'+(S.rankPeriod?'Só os pontos feitos do dia 1 ao último dia do mês. O 1º lugar é o Ligante do mês: '+esc(cfg().monthPrize)+'.':'Toque em um nome para ver de onde veio cada ponto. O ranking zera a cada semestre.')+'</p></div>'+(S.canEdit?'<div class="tools"><button class="btn primary" data-act="entry-add">Lançar pontos</button></div>':'')+'</div><p class="notice box">O ranking decide quem acompanha as <b>cirurgias</b> (Frotinha e outras) e quem entra nas <b>pesquisas exclusivas</b>.</p><div class="tools">'+period+'</div>'+chips+
+  return '<div class="head"><div><h2>'+(S.rankPeriod?'Ranking de '+monthName(S.rankPeriod):'Ranking '+esc(S.cycle))+'</h2><p>'+(S.rankPeriod?'Só os pontos feitos do dia 1 ao último dia do mês.':'Toque em um nome para ver de onde veio cada ponto. O ranking zera a cada semestre.')+'</p></div>'+(S.canEdit?'<div class="tools"><button class="btn primary" data-act="entry-add">Lançar pontos</button></div>':'')+'</div><p class="notice box">O ranking decide quem acompanha as <b>cirurgias</b> (Frotinha e outras) e quem entra nas <b>pesquisas exclusivas</b>.</p><div class="tools">'+period+'</div>'+chips+
     '<section class="card">'+(rk.length?'<ol class="rank">'+rk.map(function(r){
       return '<li class="'+(r.pos<=3&&r.s.points>0?'top3 ':'')+(me&&me.id===r.m.id?'mine':'')+'"><button data-act="extrato" data-id="'+esc(r.m.id)+'" aria-label="Extrato de '+esc(r.m.name)+'"><span class="pos big num">'+r.pos+'</span><span class="nm"><span class="who">'+dot(r.m,'sm')+'<b>'+esc(r.m.name)+(me&&me.id===r.m.id?' (você)':'')+'</b></span><span class="meta">'+sectorTags(r.m)+roleBadge(r.m)+'<span>'+plural(r.s.goalsDone,'meta','metas')+'</span><span>'+plural(r.s.presences,'presença','presenças')+'</span>'+(chMap[r.m.id]?'<span class="pill crit">Devendo '+chMap[r.m.id]+'</span>':'')+'</span><span class="track"><i style="width:'+Math.max(0,Math.round(r.s.points/max*100))+'%"></i></span></span><span class="pts big num">'+r.s.points+'<small>pts</small></span></button></li>';}).join('')+'</ol>'
       :'<p class="empty"><b>Ninguém neste ranking</b>'+(S.members.length?'Não há ligantes ativos neste setor.':'Cadastre os ligantes na área da Diretoria.')+'</p>')+'</section>'+
-    (hall?'<section class="card"><div class="cardhead"><h3 class="sec">Ligante do mês</h3><span class="small muted">Prêmio: '+esc(cfg().monthPrize)+'</span></div><div class="tablewrap"><table><tbody>'+hall+'</tbody></table></div></section>':'');
+    (false&&hall?'<section class="card"><div class="cardhead"><h3 class="sec">Ligante do mês</h3><span class="small muted">Prêmio: '+esc(cfg().monthPrize)+'</span></div><div class="tablewrap"><table><tbody>'+hall+'</tbody></table></div></section>':'');
 }
 function viewCobranca(){
   var ch=charges(),total=0;ch.forEach(function(c){total+=c.items.length;});
