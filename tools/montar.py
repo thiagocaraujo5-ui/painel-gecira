@@ -4,17 +4,17 @@ Uso: python3 -I tools/montar.py <pasta-de-entrada> <arquivo-de-saida> <AAAA-MM-D
 
 A pasta de entrada tem um arquivo por coleção, com as linhas que db_list devolve
 (um objeto JSON por linha, com "id" e "data"): members.jsonl, events.jsonl,
-goals.jsonl, entries.jsonl, unipex.jsonl, pedidos.jsonl. E também config.json,
+goals.jsonl, entries.jsonl, unipex.jsonl, pedidos.jsonl, cobrancas.jsonl. E também config.json,
 importador.json e alterado.json, cada um com o objeto "data" do documento
 (ou {} se o documento não existir).
 
-O que NÃO vai para o site: cobranças, contatos, avisos, envios, fotos enviadas
+O que NÃO vai para o site: contatos, avisos, envios, fotos enviadas
 pelo painel, o campo "by" (id de quem gravou), pedidos excluídos e os campos de
 WhatsApp e e-mail da configuração.
 """
 import json, os, sys
 
-PUBLIC = ['members', 'events', 'goals', 'entries', 'unipex', 'pedidos']
+PUBLIC = ['members', 'events', 'goals', 'entries', 'unipex', 'pedidos', 'cobrancas']
 CONFIG_DROP = {'whatsapp', 'waSectors', 'emailOn'}
 
 

@@ -1,5 +1,45 @@
 {
  "collections": {
+  "cobrancas": {
+   "o3iv90kz2rucjt9q2f33": {
+    "date": "2026-11-15",
+    "email": true,
+    "memberId": "victor-leitao",
+    "resolved": true,
+    "resolvedAt": "2026-11-15",
+    "text": "Nao fez tal coisa"
+   },
+   "ov995zzf537ca1g93fcy": {
+    "date": "2026-11-15",
+    "memberId": "getulio-filho",
+    "resolved": true,
+    "resolvedAt": "2026-11-15",
+    "text": "nao foi para extensao e nao deu justificativa"
+   },
+   "t4kbffjbgwpjtvf6soi0": {
+    "date": "2026-11-15",
+    "email": false,
+    "memberId": "natalia-queiros",
+    "resolved": true,
+    "resolvedAt": "2026-11-15",
+    "text": "não foi feita a cobrança de todo mundo"
+   },
+   "xwnvswslwj8s50qrqmb0": {
+    "date": "2026-11-15",
+    "email": false,
+    "memberId": "sophia-arrais",
+    "resolved": true,
+    "resolvedAt": "2026-11-15",
+    "text": "nao fez a capa do video"
+   },
+   "zhuugn4voaz1t33rjai3": {
+    "date": "2026-11-15",
+    "memberId": "pedro-dantas",
+    "resolved": true,
+    "resolvedAt": "2026-11-15",
+    "text": "nao fez a pesquisa"
+   }
+  },
   "entries": {},
   "events": {},
   "goals": {
@@ -322,7 +362,7 @@
    "rows": 1
   }
  },
- "exportedAt": "2026-11-16T17:42",
+ "exportedAt": "2026-11-16T17:47",
  "source": {
   "alteradoAt": "",
   "importadorRows": 1

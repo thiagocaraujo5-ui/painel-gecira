@@ -51,10 +51,8 @@ nav.tabs a.alert[aria-current="page"]{border-bottom-color:var(--crit)}
 .badge[hidden]{display:none}
 
 nav.bottom{display:none}
-body.mirror a[href="#cobranca"]{display:none!important}
 @media (max-width:760px){
   nav.tabs{display:none}
-  body.mirror nav.bottom{grid-template-columns:repeat(4,1fr)}
   nav.bottom{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(13,16,20,.96);border-top:1px solid var(--line);padding:4px 4px 8px}
   nav.bottom a{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 3px;color:var(--muted);text-decoration:none;font-size:11px;font-weight:600;border-radius:10px}
   nav.bottom a svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -413,7 +411,7 @@ dialog::backdrop{background:rgba(3,6,9,.72)}
 (function(){
 'use strict';
 
-/* MIRROR: cópia pública só de leitura (fora do Claude). Os dados vêm de data.json e a cobrança não aparece. */
+/* MIRROR: cópia pública só de leitura (fora do Claude). Os dados vêm de data.json; a Diretoria não aparece. */
 var MIRROR=!!window.__MIRROR;
 /*SCORING-START*/
 var SECTORS=[{id:'marketing',label:'Marketing'},{id:'pesquisa',label:'Pesquisa'},{id:'extensao',label:'Extensão'},{id:'ensino',label:'Ensino'}];
@@ -561,7 +559,7 @@ var db=null,user=null,raf=0;
 function cfg(){var c={},k;for(k in DEFAULTS)c[k]=DEFAULTS[k];for(k in S.config)if(S.config[k]!==undefined&&S.config[k]!==null)c[k]=S.config[k];if(!Array.isArray(c.activities))c.activities=DEFAULTS.activities;return c;}
 function data(){return {members:S.members,events:S.events,goals:S.goals,entries:S.entries,charges:S.charges,config:cfg()};}
 function scores(){return computeScores(data(),S.cycle,nowStr());}
-function charges(){if(MIRROR)return [];return computeCharges(data(),semesterOf(todayStr()),nowStr());}
+function charges(){return computeCharges(data(),semesterOf(todayStr()),nowStr());}
 function winnersOf(ym){return monthWinners(S.members,computeScores(data(),semesterOf(ym+'-01'),nowStr()),ym);}
 function winNames(ws){return ws.map(function(w){return w.m.name;}).join(' e ');}
 function member(id){return byId(S.members,id);}
@@ -980,7 +978,7 @@ function viewInicio(){
     (ch.length?'<ul class="owelist">'+ch.slice(0,5).map(function(c){return '<li><span class="bar"></span><span class="who">'+dot(c.m)+'<span><b>'+esc(c.m.name)+'</b><small>'+esc(c.items[0].text)+'</small></span></span><span class="pill crit num">'+plural(c.items.length,'pendência','pendências')+'</span></li>';}).join('')+'</ul>'
       :'<p class="allgood">Ninguém devendo. É assim que tem que ser.</p>')+'</section>';
   var td=S.canEdit?adminTodos().filter(function(x){return !x.cfg;}):[];
-  h+=monthCard()+(td.length?'<a class="notice box" href="#diretoria" style="display:block;text-decoration:none"><b>'+plural(td.length,'pendência da presidência','pendências da presidência')+':</b> '+esc(td.slice(0,3).map(function(x){return x.txt;}).join('; '))+(td.length>3?'…':'')+'. Toque para resolver.</a>':'')+(MIRROR?best:'<div class="two">'+best+owe+'</div>');
+  h+=monthCard()+(td.length?'<a class="notice box" href="#diretoria" style="display:block;text-decoration:none"><b>'+plural(td.length,'pendência da presidência','pendências da presidência')+':</b> '+esc(td.slice(0,3).map(function(x){return x.txt;}).join('; '))+(td.length>3?'…':'')+'. Toque para resolver.</a>':'')+'<div class="two">'+best+owe+'</div>';
   if(!me){
     h+='<section class="me"><div class="who"><b>Escolha seu nome para ver suas metas e sua posição</b></div>'+meSelect()+'</section>';
   }else{
@@ -1268,7 +1266,7 @@ function render(){
   if(document.activeElement!==sel)sel.innerHTML=cs.map(function(x){return '<option value="'+x+'"'+(x===S.cycle?' selected':'')+'>'+x+'</option>';}).join('');
   var chip=$('#roleChip');chip.textContent=S.canEdit?'Diretoria: você edita':(MIRROR&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(String(window.__MIRROR_AT||''))?'Atualizado '+fmtD(String(window.__MIRROR_AT).slice(0,10))+' '+String(window.__MIRROR_AT).slice(11,16):'Somente leitura');chip.className='rolechip'+(S.canEdit?' edit':'');
   document.querySelectorAll('[data-dir]').forEach(function(a){a.hidden=!S.canEdit;});
-  if(MIRROR){document.querySelectorAll('a[href="#cobranca"]').forEach(function(a){a.hidden=true;});document.body.classList.add('mirror');}
+  if(MIRROR)document.body.classList.add('mirror');
   var grp='#'+(GROUP[S.tab]||S.tab);
   document.querySelectorAll('#tabs a').forEach(function(a){if(a.getAttribute('href')===grp)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
   document.querySelectorAll('#bottom a').forEach(function(a){var h=a.getAttribute('href').slice(1),on=h===S.tab||h===GROUP[S.tab]||(h==='mais'&&MORE.indexOf(S.tab)>=0);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
@@ -1281,7 +1279,7 @@ function render(){
   var nt=S.canEdit?adminTodos().filter(function(x){return !x.cfg;}).length:0;document.querySelectorAll('[data-todo]').forEach(function(b){b.hidden=!nt;b.textContent=nt;});
 }
 function schedule(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;render();});}
-function route(){var h=(location.hash||'').replace('#','');S.tab=TABS.indexOf(h)>=0?h:'inicio';if(MIRROR&&(S.tab==='cobranca'||S.tab==='diretoria'))S.tab='inicio';if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();render();window.scrollTo(0,0);}
+function route(){var h=(location.hash||'').replace('#','');S.tab=TABS.indexOf(h)>=0?h:'inicio';if(MIRROR&&S.tab==='diretoria')S.tab='inicio';if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();render();window.scrollTo(0,0);}
 
 document.addEventListener('click',function(ev){
   var b=ev.target.closest('[data-act]');if(!b||dlg.contains(b))return;var id=b.dataset.id,a=b.dataset.act;
