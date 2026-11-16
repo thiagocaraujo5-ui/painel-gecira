@@ -5,6 +5,15 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Painel GECIRA</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0d1014">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="GECIRA">
+<style>@media (display-mode: standalone){nav.bottom{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -713,7 +722,7 @@ function eventDlg(id,preset){
   ],onSubmit:function(v){
     if(v.type==='reuniao'&&!v.sector)return 'Escolha o setor da reunião.';
     var b=Object.assign(strip(e),v);b.points=v.points===''?null:Number(v.points);b.penalty=v.penalty===''?null:Math.abs(Number(v.penalty));if(!b.attendance)b.attendance={};
-    return saveDoc('events',id,b).then(function(){if(b.type==='reuniao'&&cfg().emailOn&&b.date>=todayStr()){toast('Reunião salva. O setor de '+sectorLabel(b.sector)+' será avisado por e-mail na rodada das 7h43.');return true;}});
+    return saveDoc('events',id,b).then(function(){if(b.type==='reuniao'&&cfg().emailOn&&b.date>=todayStr()){toast('Reunião salva. O setor de '+sectorLabel(b.sector)+' será avisado por e-mail na rodada das 10h43.');return true;}});
   },done:'Evento salvo.',onDelete:id?function(){return delDoc('events',id);}:null});
 }
 function importEventsDlg(){
@@ -1148,7 +1157,7 @@ function adminTodos(){
   if(nm.length)L.push({n:nm.length,txt:plural(nm.length,'setor sem reunião','setores sem reunião')+' em '+monthName(tm),sub:nm.map(function(s){return s.label;}).join(', '),href:'#reunioes',btn:'Marcar'});
   var last=S.mailStatus&&S.mailStatus.lastRun?String(S.mailStatus.lastRun):'',lim=addDays(t,-7);
   var q=S.outbox.filter(function(x){return x.date&&x.date>=lim&&!(last&&String(x.at||x.date+'T00:00')<=last);}).length;
-  if(q)L.push({n:q,txt:plural(q,'e-mail na fila','e-mails na fila')+' para a rodada das 7h43',sub:'Ainda dá para cancelar.',href:'#equipe',btn:'Ver'});
+  if(q)L.push({n:q,txt:plural(q,'e-mail na fila','e-mails na fila')+' para a próxima rodada',sub:'Ainda dá para cancelar.',href:'#equipe',btn:'Ver'});
   if(S.contacts){var ne=activeMembers().filter(function(m){return !S.contacts[m.id];}).length;
     if(ne)L.push({n:ne,cfg:true,txt:plural(ne,'ligante sem e-mail cadastrado','ligantes sem e-mail cadastrado'),sub:'Sem e-mail, a pessoa não recebe nenhum aviso.',act:'email-import',btn:'Importar e-mails'});}
   if(!S.events.some(function(e){return e.type==='aula'&&e.date>=t;}))L.push({n:0,cfg:true,txt:'Nenhuma aula futura na Agenda',sub:'Sem calendário não há chamada nem aviso de aula.',act:'event-import',btn:'Importar calendário'});
@@ -1181,11 +1190,11 @@ function mailRecipients(to){var ms=activeMembers(),p=String(to).split(':');if(to
 function mailLabel(to){var p=String(to).split(':');return to==='todos'?'todos os ligantes':p[0]==='coord'?'a coordenação de '+sectorLabel(p[1]):'todo o setor de '+sectorLabel(p[1]);}
 function mailDlg(to){
   var rec=mailRecipients(to),ct=S.contacts||{},n=rec.filter(function(m){return ct[m.id];}).length;
-  formDlg({title:'E-mail para '+mailLabel(to),intro:n+' de '+plural(rec.length,'destinatário tem','destinatários têm')+' e-mail cadastrado. A mensagem sai pela conta da liga na próxima rodada, às 7h43, no mesmo e-mail dos outros avisos do dia de cada pessoa.',submit:'Agendar envio',fields:[
+  formDlg({title:'E-mail para '+mailLabel(to),intro:n+' de '+plural(rec.length,'destinatário tem','destinatários têm')+' e-mail cadastrado. A mensagem sai pela conta da liga na próxima rodada de envio: 10h43 ou 17h43, o que vier primeiro.',submit:'Agendar envio',fields:[
     {name:'subject',label:'Assunto',required:true,value:''},
     {name:'text',label:'Mensagem',type:'textarea',required:true,value:'',hint:'O e-mail abre com "Oi, [nome]" e fecha com a assinatura da GECIRA.'}
   ],onSubmit:function(v){if(!rec.length)return 'Não há ninguém nesse grupo.';if(!n)return 'Ninguém desse grupo tem e-mail cadastrado. Cadastre em Diretoria.';
-    return saveDoc('envios',null,{kind:'mensagem',to:to,label:mailLabel(to),subject:v.subject,text:v.text,date:todayStr(),at:nowStr()});},done:'E-mail agendado para a rodada das 7h43.'});
+    return saveDoc('envios',null,{kind:'mensagem',to:to,label:mailLabel(to),subject:v.subject,text:v.text,date:todayStr(),at:nowStr()});},done:'E-mail agendado. Sai na próxima rodada (10h43 ou 17h43).'});
 }
 function outboxCard(){
   var lim=addDays(todayStr(),-7),last=S.mailStatus&&S.mailStatus.lastRun?String(S.mailStatus.lastRun):'';
@@ -1230,7 +1239,7 @@ function noteDlg(id){
 }
 function unipexAlertDlg(){
   var ym=unipexMonth(),c=cfg();
-  formDlg({title:'Alerta do UNIPEX',intro:'Monta o aviso para a liga. O texto sai pronto para o WhatsApp'+(c.emailOn?' e, se você marcar, vai também por e-mail na rodada das 7h43.':'.'),submit:'Gerar alerta',fields:[
+  formDlg({title:'Alerta do UNIPEX',intro:'Monta o aviso para a liga. O texto sai pronto para o WhatsApp'+(c.emailOn?' e, se você marcar, vai também por e-mail na próxima rodada (10h43 ou 17h43).':'.'),submit:'Gerar alerta',fields:[
     {name:'to',label:'Para quem',type:'select',value:'coord',options:[['coord','Presidência e coordenadores'],['todos','Todos os ligantes']]},
     {name:'text',label:'Mensagem',type:'textarea',required:true,value:'O relatório UNIPEX de '+monthName(ym)+' está para fechar. Confira na aba UNIPEX do painel tudo o que o grupo fez no mês e mande para a faculdade o quanto antes!!'}
   ].concat(c.emailOn?[{name:'email',label:'Enviar também por e-mail na próxima rodada',type:'checkbox',value:true}]:[]),
