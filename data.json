@@ -384,14 +384,14 @@
    "usage": "Sem pontos, sem prioridade. A ordem do ranking do semestre é a ordem de escolha."
   },
   "status/importador": {
-   "imported": 1,
-   "lastRun": "2026-11-16T20:17",
+   "imported": 0,
+   "lastRun": "2026-11-17T12:18",
    "rows": 2
   }
  },
- "exportedAt": "2026-11-16T20:48",
+ "exportedAt": "2026-11-17T20:48",
  "source": {
-  "alteradoAt": "2026-11-16T20:17",
+  "alteradoAt": "2026-11-17T17:55",
   "importadorRows": 2
  }
 }
