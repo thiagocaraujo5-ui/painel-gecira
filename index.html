@@ -437,7 +437,8 @@ var DEFAULTS={
   presenceAula:1, presenceReuniao:1, absencePenalty:1, latePenalty:1,
   activities:[
     {label:'Organizar evento da liga',points:4},
-    {label:'Trabalho apresentado em congresso',points:4}
+    {label:'Trabalho apresentado em congresso',points:4},
+    {label:'Participou de capacitação',points:2}
   ],
   usage:'Sem pontos, sem prioridade. A ordem do ranking do semestre é a ordem de escolha.'
 };
@@ -810,15 +811,15 @@ function goalDlg(id,preset){
 async function goalDone(id){var g=byId(S.goals,id);if(!g)return;try{var b=strip(g);b.status='concluida';b.doneAt=todayStr();b.late=nowStr()>deadlineOf(g);await saveDoc('goals',id,b);toast('Meta entregue: '+ptsTxt(num(g.points,0))+(b.late?' (com desconto de atraso)':'')+'.');}catch(e){toast(writeErr(e));}}
 function entryDlg(memberId,extra){
   var c=cfg();
-  formDlg({title:extra?'Registrar feito pela liga':'Lançar pontos',intro:extra?'Registre o que o ligante fez a mais e quanto vale. Aparece no mural e no extrato dele.':'Use para o que não é presença nem meta. Valor negativo desconta pontos.',fields:[
-    {name:'memberId',label:'Ligante',type:'select',required:true,value:memberId||'',options:memberOptions(false)},
+  formDlg({title:extra?'Registrar feito pela liga':'Lançar pontos',intro:extra?'Registre o que o ligante fez a mais e quanto vale. Aparece no mural e no extrato dele.':'Use para o que não é presença nem meta. Marque uma ou várias pessoas: cada uma recebe os mesmos pontos. Valor negativo desconta.',fields:[
+    {name:'memberId',label:'Ligantes',type:'people',required:true,value:memberId||''},
     {name:'act',label:'Atividade',type:'select',value:'',options:[['','Outra (descreva abaixo)']].concat(c.activities.map(function(a,i){return [String(i),a.label+' ('+ptsTxt(num(a.points,0))+')'];}))},
     {name:'reason',label:extra?'O que foi feito':'Motivo',required:true,value:'',placeholder:'Montou por conta própria um banco de questões de anatomia'},
     {name:'points',label:'Pontos',type:'number',step:'1',required:true,half:true,value:''},
     {name:'date',label:'Data',type:'date',required:true,half:true,value:todayStr()},
     {name:'extra',label:'Mostrar no mural de feitos pela liga',type:'checkbox',value:!!extra}
   ],after:function(frm){$('#f_act',frm).addEventListener('change',function(){var a=c.activities[+this.value];if(this.value!==''&&a){$('#f_reason',frm).value=a.label;$('#f_points',frm).value=num(a.points,0);}});},
-  onSubmit:function(v){var p=Number(v.points);if(!isFinite(p)||p===0)return 'Informe um número de pontos diferente de zero.';return saveDoc('entries',null,{memberId:v.memberId,reason:v.reason,points:p,date:v.date,extra:!!v.extra});},done:extra?'Feito registrado.':'Pontos lançados.'});
+  onSubmit:async function(v){var p=Number(v.points);if(!isFinite(p)||p===0)return 'Informe um número de pontos diferente de zero.';var ids=String(v.memberId).split(',').filter(Boolean);for(var k=0;k<ids.length;k++)await saveDoc('entries',null,{memberId:ids[k],reason:v.reason,points:p,date:v.date,extra:!!v.extra});if(ids.length>1){toast('Pontos lançados para '+ids.length+' pessoas.');return true;}},done:extra?'Feito registrado.':'Pontos lançados.'});
 }
 function chargeDlg(memberId){
   formDlg({title:'Cobrar alguém',intro:'O nome entra na lista de cobrança, visível para toda a liga, até você marcar como resolvido.',submit:'Colocar na cobrança',fields:[
