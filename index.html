@@ -526,6 +526,7 @@ function monthScores(scores,ym){
   return out;
 }
 /* Ligante do mês: 1º lugar do mês com pontuação positiva. Empate total divide o título. */
+function rankSec(){var ok=SECTORS.map(function(x){return x.id;});if(ok.indexOf(S.rankSector)>=0)return S.rankSector;var me=meMember();if(me&&ok.indexOf(me.sector)>=0)return me.sector;if(me&&ok.indexOf(me.sector2)>=0)return me.sector2;return ok[0];}
 function monthWinners(members,scores,ym){return rankMembers(members,monthScores(scores,ym),'').filter(function(r){return r.pos===1&&r.s.points>0;});}
 /*SCORING-END*/
 
@@ -954,21 +955,13 @@ function eventViewDlg(id){
 function chargeText(c){return '*'+c.m.name+'*, você está devendo à '+cfg().leagueName+':\n'+c.items.map(function(it){return '• '+it.text;}).join('\n')+'\n\nResolva e avise a diretoria. Enquanto isso, seu nome fica na lista de cobrança do painel.';}
 function chargeAllText(list){var L=['*'+cfg().leagueName+': quem precisa ser cobrado*',''];list.forEach(function(c){L.push('*'+c.m.name+'* ('+sectorLabel(c.m.sector)+')');c.items.forEach(function(it){L.push('• '+it.text);});L.push('');});L.push('Só sai da lista quem resolve.');return L.join('\n');}
 function resumoText(){
-  var c=cfg(),t=todayStr(),lim=addDays(t,7),L=['*'+c.leagueName+': resumo da semana*',''];
+  var c=cfg(),t=todayStr(),lim=addDays(t,7),L=['*'+c.leagueName+': próximos 7 dias*',''];
   var evs=S.events.filter(function(e){return e.date>=t&&e.date<=lim;}).sort(function(a,b){return (a.date+(a.time||''))<(b.date+(b.time||''))?-1:1;});
-  L.push('📅 *Próximos 7 dias*');
+  L.push('📅 *Agenda*');
   if(evs.length)evs.forEach(function(e){L.push('• '+fmtLong(e.date)+(e.time?' às '+e.time:'')+': '+e.title+(e.sector?' ('+sectorLabel(e.sector)+')':'')+(e.place?', '+e.place:''));});else L.push('• Nada marcado.');
   var soon=S.goals.filter(function(g){return g.status==='pendente'&&member(g.memberId)&&g.due>=t&&g.due<=lim;}).sort(function(a,b){return a.due<b.due?-1:1;});
-  if(soon.length){L.push('','🎯 *Metas vencendo*');soon.forEach(function(g){L.push('• '+member(g.memberId).name+': '+g.title+' (até '+fmtD(g.due)+')');});}
-  var rk=rankMembers(S.members,computeScores(data(),semesterOf(t),t),'').slice(0,5);
-  if(rk.length){L.push('','🏆 *Ranking '+semesterOf(t)+'*');rk.forEach(function(r){L.push(r.pos+'. '+r.m.name+': '+r.s.points+' pts');});}
-  var cur=t.slice(0,7),wp=winnersOf(prevYm(cur)),wc=winnersOf(cur);
-  if(false&&wp.length)L.push('','⭐ *Ligante do mês de '+monthName(prevYm(cur))+'*: '+winNames(wp)+' ('+wp[0].s.points+' pts). '+c.monthPrize+'.');
-  if(false&&wc.length)L.push((wp.length?'':'\n')+'Disputa de '+monthName(cur)+': '+winNames(wc)+' lidera com '+wc[0].s.points+' pts.');
-  var ch=charges();
-  if(ch.length){L.push('','🚨 *Precisa ser cobrado ('+ch.length+')*');ch.forEach(function(x){L.push('• *'+x.m.name+'* ('+sectorLabel(x.m.sector)+')');x.items.forEach(function(it){L.push('   – '+it.text);});});L.push('Só sai da lista quem resolve.');}
-  else L.push('','✅ Ninguém na lista de cobrança.');
-  L.push('','Suas metas e o ranking completo estão no painel.');
+  L.push('','🎯 *Metas que vencem*');if(!soon.length)L.push('• Nenhuma meta vencendo.');if(soon.length){soon.forEach(function(g){L.push('• '+member(g.memberId).name+': '+g.title+' (até '+fmtD(g.due)+')');});}
+  L.push('','Suas metas, o ranking e a lista de cobrança estão no app: https://thiagocaraujo5-ui.github.io/painel-gecira/');
   return L.join('\n');
 }
 function gcal(e){
@@ -1068,9 +1061,9 @@ function viewInicio(){
     return '<section class="card empty"><b>O painel ainda está vazio</b>'+(S.canEdit?'Comece cadastrando os ligantes e o calendário de aulas. Você pode colar a lista inteira de uma vez.<div class="tools" style="margin-top:12px"><button class="btn primary" data-act="member-import">Importar ligantes</button><button class="btn" data-act="event-import">Importar calendário</button></div>':'A diretoria ainda não cadastrou os ligantes. Volte em breve.')+'</section>';
   }
   var t=todayStr(),me=meMember(),sc=scores(),rk=rankMembers(S.members,sc,''),ch=charges(),h='';
-  var top=rk.filter(function(r){return r.s.points>0;}).slice(0,3);
-  var best='<section class="card"><div class="cardhead"><h3 class="sec">Quem mais faz pela liga</h3><a class="btn sm ghost" href="#ranking">Ranking completo</a></div>'+
-    (top.length?'<ol class="podium">'+top.map(function(r,i){return '<li class="'+(i===0?'p1':'')+'"><button data-act="extrato" data-id="'+esc(r.m.id)+'" aria-label="Extrato de '+esc(r.m.name)+'"><span class="pos big num">'+r.pos+'</span><span class="who">'+dot(r.m)+'<span><b>'+esc(r.m.name)+'</b><span class="tags">'+sectorTags(r.m)+roleBadge(r.m)+'</span></span></span><span class="pts big num">'+r.s.points+'<small>pontos</small></span></button></li>';}).join('')+'</ol>'
+  var lead=SECTORS.map(function(x){var r=rankMembers(S.members,sc,x.id).filter(function(r){return r.pos===1&&r.s.points>0;});return {sec:x,r:r};});
+  var best='<section class="card"><div class="cardhead"><h3 class="sec">Quem lidera cada setor</h3><a class="btn sm ghost" href="#ranking">Ranking por setor</a></div>'+
+    (lead.some(function(l){return l.r.length;})?'<ol class="podium">'+lead.map(function(l){var r=l.r[0];return r?'<li><button data-act="extrato" data-id="'+esc(r.m.id)+'" aria-label="Extrato de '+esc(r.m.name)+'"><span class="pos big num"><i class="dot '+l.sec.id+'"></i></span><span class="who"><span><b>'+esc(l.r.map(function(x){return x.m.name;}).join(', '))+'</b><span class="tags">'+esc(l.sec.label)+'</span></span></span><span class="pts big num">'+r.s.points+'<small>pontos</small></span></button></li>':'<li><button disabled><span class="pos big num"><i class="dot '+l.sec.id+'"></i></span><span class="who"><span><b class="muted">Ninguém pontuou</b><span class="tags">'+esc(l.sec.label)+'</span></span></span><span></span></button></li>';}).join('')+'</ol>'
       :'<p class="empty"><b>Ninguém pontuou ainda</b>O primeiro ponto do semestre sai na próxima aula ou meta entregue.</p>')+'<p class="notice">O topo do ranking escolhe primeiro as <b>cirurgias</b> e entra nas <b>pesquisas exclusivas</b>.</p></section>';
   var owe='<section class="card owe"><div class="cardhead"><h3 class="sec crit">Quem precisa ser cobrado</h3><a class="btn sm ghost" href="#cobranca">'+(ch.length?'Ver todos ('+ch.length+')':'Abrir')+'</a></div>'+
     (ch.length?'<ul class="owelist">'+ch.slice(0,5).map(function(c){return '<li><span class="bar"></span><span class="who">'+dot(c.m)+'<span><b>'+esc(c.m.name)+'</b><small>'+esc(c.items[0].text)+'</small></span></span><span class="pill crit num">'+plural(c.items.length,'pendência','pendências')+'</span></li>';}).join('')+'</ul>'
@@ -1080,10 +1073,10 @@ function viewInicio(){
   if(!me){
     h+='<section class="me"><div class="who"><b>Escolha seu nome para ver suas metas e sua posição</b></div>'+meSelect()+'</section>';
   }else{
-    var mine=rk.filter(function(r){return r.m.id===me.id;})[0],s=sc[me.id],myCh=ch.filter(function(c){return c.m.id===me.id;})[0];
+    var msec=SECTORS.map(function(x){return x.id;}).indexOf(me.sector)>=0?me.sector:null,mrk=msec?rankMembers(S.members,sc,msec):[],mine=mrk.filter(function(r){return r.m.id===me.id;})[0],s=sc[me.id],myCh=ch.filter(function(c){return c.m.id===me.id;})[0];
     h+='<section class="me"><div class="who">'+meSelect()+'<span class="small">'+esc((isCoord(me)||me.role==='diretoria')?roleLabel(me):sectorLabel(me.sector)+(me.sector2?' e '+sectorLabel(me.sector2):'')+' · Ligante')+'</span></div>'+
       (myCh?'<a class="warnme" href="#cobranca">Você está na lista de cobrança: '+plural(myCh.items.length,'pendência','pendências')+'. Resolva.</a>':'')+
-      '<div class="figs">'+(mine?'<div><b class="big num">'+ord(mine.pos)+'</b><span>de '+rk.length+' no ranking</span></div>':'')+
+      '<div class="figs">'+(mine?'<div><b class="big num">'+ord(mine.pos)+'</b><span>de '+mrk.length+' em '+esc(sectorLabel(msec))+'</span></div>':'')+
       '<div><b class="big num">'+s.points+'</b><span>pontos em '+esc(S.cycle)+'</span></div><div><b class="big num">'+s.pending+'</b><span>'+(s.pending===1?'meta aberta':'metas abertas')+'</span></div></div></section>';
   }
   var upcoming=S.events.filter(function(e){return e.date>=t&&(!e.sector||!me||inSector(me,e.sector));}).sort(function(a,b){return (a.date+(a.time||''))<(b.date+(b.time||''))?-1:1;});
@@ -1107,14 +1100,14 @@ function viewInicio(){
 function viewRanking(){
   var cur=todayStr().slice(0,7),months=cycleMonths().filter(function(m){return m<=cur;});
   if(S.rankPeriod&&months.indexOf(S.rankPeriod)<0)S.rankPeriod='';
-  var full=scores(),sc=S.rankPeriod?monthScores(full,S.rankPeriod):full,rk=rankMembers(S.members,sc,S.rankSector),max=1,me=meMember(),chMap={};
+  var full=scores(),sc=S.rankPeriod?monthScores(full,S.rankPeriod):full,sec=rankSec(),rk=rankMembers(S.members,sc,sec),max=1,me=meMember(),chMap={};
   var period='<select class="sel" id="rankPeriod" data-chg="rank-period" aria-label="Período"><option value="">Semestre inteiro</option>'+months.slice().reverse().map(function(m){return '<option value="'+m+'"'+(S.rankPeriod===m?' selected':'')+'>Mês de '+monthName(m)+'</option>';}).join('')+'</select>';
   var hall=months.slice().reverse().map(function(m){var w=monthWinners(S.members,full,m);
     return '<tr><td>'+monthName(m)+'</td><td>'+(w.length?'<b>'+esc(winNames(w))+'</b><br><small class="muted num">'+plural(w[0].s.points,'ponto','pontos')+'</small>':'<span class="muted">Sem pontuação</span>')+'</td><td class="r">'+(m===cur?'<span class="pill warn">Em disputa</span>':w.length?'<span class="pill acc">Ligante do mês</span>':'')+'</td></tr>';}).join('');
   charges().forEach(function(c){chMap[c.m.id]=c.items.length;});
   rk.forEach(function(r){if(r.s.points>max)max=r.s.points;});
-  var chips='<div class="chips" role="group" aria-label="Filtrar por setor">'+[{id:'',label:'Geral'}].concat(SECTORS).map(function(s){return '<button class="chipbtn" data-act="rank-sector" data-id="'+s.id+'" aria-pressed="'+(S.rankSector===s.id)+'">'+(s.id?'<i class="dot '+s.id+'"></i>':'')+esc(s.label)+'</button>';}).join('')+'</div>';
-  return '<div class="head"><div><h2>'+(S.rankPeriod?'Ranking de '+monthName(S.rankPeriod):'Ranking '+esc(S.cycle))+'</h2><p>'+(S.rankPeriod?'Só os pontos feitos do dia 1 ao último dia do mês.':'Toque em um nome para ver de onde veio cada ponto. O ranking zera a cada semestre.')+'</p></div>'+(S.canEdit?'<div class="tools"><button class="btn primary" data-act="entry-add">Lançar pontos</button></div>':'')+'</div><p class="notice box">O ranking decide quem acompanha as <b>cirurgias</b> (Frotinha e outras) e quem entra nas <b>pesquisas exclusivas</b>.</p><div class="tools">'+period+'</div>'+chips+
+  var chips='<div class="chips" role="group" aria-label="Escolher setor">'+SECTORS.map(function(s){return '<button class="chipbtn" data-act="rank-sector" data-id="'+s.id+'" aria-pressed="'+(sec===s.id)+'">'+(s.id?'<i class="dot '+s.id+'"></i>':'')+esc(s.label)+'</button>';}).join('')+'</div>';
+  return '<div class="head"><div><h2>Ranking de '+esc(sectorLabel(sec))+' · '+(S.rankPeriod?monthName(S.rankPeriod):esc(S.cycle))+'</h2><p>Cada setor tem o seu ranking. '+(S.rankPeriod?'Só os pontos feitos do dia 1 ao último dia do mês.':'Toque em um nome para ver de onde veio cada ponto. O ranking zera a cada semestre.')+'</p></div>'+(S.canEdit?'<div class="tools"><button class="btn primary" data-act="entry-add">Lançar pontos</button></div>':'')+'</div><p class="notice box">O ranking decide quem acompanha as <b>cirurgias</b> (Frotinha e outras) e quem entra nas <b>pesquisas exclusivas</b>.</p><div class="tools">'+period+'</div>'+chips+
     '<section class="card">'+(rk.length?'<ol class="rank">'+rk.map(function(r){
       return '<li class="'+(r.pos<=3&&r.s.points>0?'top3 ':'')+(me&&me.id===r.m.id?'mine':'')+'"><button data-act="extrato" data-id="'+esc(r.m.id)+'" aria-label="Extrato de '+esc(r.m.name)+'"><span class="pos big num">'+r.pos+'</span><span class="nm"><span class="who">'+dot(r.m,'sm')+'<b>'+esc(r.m.name)+(me&&me.id===r.m.id?' (você)':'')+'</b></span><span class="meta">'+sectorTags(r.m)+roleBadge(r.m)+'<span>'+plural(r.s.goalsDone,'meta','metas')+'</span><span>'+plural(r.s.presences,'presença','presenças')+'</span>'+(chMap[r.m.id]?'<span class="pill crit">Devendo '+chMap[r.m.id]+'</span>':'')+'</span><span class="track"><i style="width:'+Math.max(0,Math.round(r.s.points/max*100))+'%"></i></span></span><span class="pts big num">'+r.s.points+'<small>pts</small></span></button></li>';}).join('')+'</ol>'
       :'<p class="empty"><b>Ninguém neste ranking</b>'+(S.members.length?'Não há ligantes ativos neste setor.':'Cadastre os ligantes na área da Diretoria.')+'</p>')+'</section>'+
@@ -1392,7 +1385,7 @@ document.addEventListener('click',function(ev){
     'charge-add':function(){chargeDlg();},'charge-ok':function(){chargeResolve(id);},
     'charge-copy':function(){var c=charges().filter(function(x){return x.m.id===id;})[0];if(c)copyDlg('Cobrança de '+c.m.name,'Texto pronto para mandar no privado ou no grupo. Pode editar antes.',chargeText(c),false);},
     'charge-copy-all':function(){copyDlg('Lista de cobrança','Texto pronto para o grupo do WhatsApp. Pode editar antes.',chargeAllText(charges()),false);},
-    'resumo':function(){copyDlg('Resumo da semana','Copie e cole no grupo do WhatsApp. O texto é montado com os dados de hoje e você pode editar antes.',resumoText(),false);}};
+    'resumo':function(){copyDlg('Resumo dos próximos 7 dias','Só o que acontece nos próximos 7 dias: agenda e metas que vencem. Copie e cole no grupo do WhatsApp; dá para editar antes.',resumoText(),false);}};
   if(edit[a]){if(S.canEdit)edit[a]();return;}
   if(a==='extrato')extratoDlg(id);
   else if(a==='event-view')eventViewDlg(id);
