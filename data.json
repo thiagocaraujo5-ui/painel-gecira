@@ -59,6 +59,28 @@
   "entries": {},
   "events": {},
   "goals": {
+   "4scw6k9xuh4pjxf5re3i": {
+    "doneAt": "2026-11-25",
+    "due": "2026-11-29",
+    "dueTime": "",
+    "group": "gmwwg8gyn",
+    "late": false,
+    "memberId": "isaquiel-justa",
+    "points": 2,
+    "status": "concluida",
+    "title": "Artigo de Neurocirurgia 2027"
+   },
+   "botmcts4auw8m2mlwtrd": {
+    "doneAt": "2026-11-25",
+    "due": "2026-11-29",
+    "dueTime": "",
+    "group": "gmwwg8gyn",
+    "late": false,
+    "memberId": "pedro-dantas",
+    "points": 2,
+    "status": "concluida",
+    "title": "Artigo de Neurocirurgia 2027"
+   },
    "teste-aviso-email": {
     "doneAt": "2026-11-16",
     "due": "2026-11-30",
@@ -372,6 +394,10 @@
     {
      "label": "Trabalho apresentado em congresso",
      "points": 4
+    },
+    {
+     "label": "Participou de capacitação",
+     "points": 2
     }
    ],
    "formUrl": "https://forms.gle/cuJYc1JJemjbeXts5",
@@ -389,9 +415,9 @@
    "rows": 2
   }
  },
- "exportedAt": "2026-11-25T12:48",
+ "exportedAt": "2026-11-26T07:48",
  "source": {
-  "alteradoAt": "2026-11-25T10:00",
+  "alteradoAt": "2026-11-25T16:32",
   "importadorRows": 2
  }
 }
